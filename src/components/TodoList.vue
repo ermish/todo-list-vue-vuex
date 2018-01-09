@@ -1,10 +1,13 @@
 <template>
 <div class='todo-list'>
-    <div v-for="todo in todos" 
+    <div class='todo-item' 
+        v-for="todo in todos" 
         :key="todo.id">
-        <todo class='todo'
-                :title='todo.text'
-                :notes='todo.notes'>
+        <todo
+            :title='todo.text'
+            :notes='todo.notes'
+            v-on:completed="onTodoCompleted(todo.id)"
+            >
         </todo>
     </div>
 </div>
@@ -12,39 +15,48 @@
 
 
 <script>
+import { mapActions } from 'vuex'
 import Todo from './Todo'
 
 export default {
   name: 'todo-list',
-  data: () => {
-    return {
-      todos: [
-        {id: 1, text: 'lol', notes: 'this is a note'},
-        {id: 2, text: 'lawl', notes: 'this is a description'},
-        {id: 3, text: 'teehee', notes: 'this is some detailed stuff'}]
+  computed: {
+    todos: function () {
+      return this.$store.state.todos
     }
   },
   components: {
     'todo': Todo
+  },
+  methods: {
+    ...mapActions([
+      'addTodo',
+      'removeTodo'
+    ]),
+    onTodoCompleted: function (id) {
+      var self = this
+      setTimeout(() => {
+        self.removeTodo(id)
+      }, 2000)
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
     .todo-list{
-        background-color: #ffffff;
-        border-radius: 25px;
-
         display: grid;
-        grid-template-columns: 10px 1fr 10px;
-        grid-auto-rows: 500px;
+        grid-template-columns: 0px 1fr 0px;
+        grid-auto-rows: auto;
         grid-row-gap: 10px;
-        grid-column-gap: 10px;
+        
+        border-radius: 8px;
+        background-color: #ffffff;
+        padding: 40px 30px 60px 30px;
+        min-height: 400px;
 
-        .todo{
+        & .todo-item{
              grid-column: 2 / 2;
-             grid-row: auto;
-            // grid-row: 2 / 2;
         }
     }
 </style>
