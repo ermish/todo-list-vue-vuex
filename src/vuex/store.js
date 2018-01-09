@@ -9,7 +9,7 @@ const state = {
   todos: [
     { id: 0, text: 'lol', notes: 'this is a note' },
     { id: 1, text: 'lawl', notes: 'this is a description' },
-    { id: 2, text: 'teehee', notes: 'this is some detailed stuff' }
+    { id: 3, text: 'teehee', notes: 'this is some detailed stuff' }
   ]
 }
 
@@ -19,8 +19,8 @@ const state = {
 // mutations must be synchronous and can be recorded by plugins
 // for debugging purposes.
 const mutations = {
-  addTodo (state, newTodo) {
-    state.todos.push(newTodo)
+  addTodo (state) {
+    state.todos.push({ id: 4, text: '', notes: 'new todo notes' })
   },
   removeTodo (state, todoId) {
     state.todos = state.todos.filter((obj) => {

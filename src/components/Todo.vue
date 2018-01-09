@@ -1,14 +1,22 @@
 <template>
   <div class='todo' 
-       @click='doubleClickHandler'
+       @click='onTodoClick'
        v-bind:class="{ iscollapsed: isCollapsed }">
     <div class='todo-header'>
       <input type="checkbox" :id="boxId" :checked="isCompleted" />
       <label :for="boxId" class='todo-checkbox' @click='onTodoCompleted'></label> 
-      <h1 class='todo-title'>{{ title }}</h1>
+      <div class='todo-title'
+           @click='onTitleClick'>
+        <h1 class='title-fixed'
+            v-if='isCollapsed'>{{ title_ }}</h1>
+        <input class='title-editable'
+               placeholder='drink some water...' 
+               v-else 
+               v-model='title_' />
+      </div>
     </div>
-    <div class='todo-details'>
-      <div class='todo-notes'>{{ notes }}</div>
+    <div class='todo-details'> 
+      <div class='todo-notes'>{{ notes_ }}</div>
       <div class='todo-subtasks'>
         <ol>
           <li v-for="subtask in subtasks" :key="subtask.id">
@@ -23,19 +31,22 @@
 <script>
 export default {
   name: 'todo',
-  props: [
-    'title',
-    'notes',
-    'id'
-  ],
-  data: () => {
+  props: {
+    title: String,
+    notes: String,
+    id: String
+  },
+  data: function () {
     return {
+      title_: this.title,
+      notes_: this.notes,
       boxId: 'box' + Math.ceil(Math.random() * 10000),
       isCollapsed: true,
       isCompleted: false,
+      inTitleEditMode: false,
       subtasks: [{id: 1, text: 'lol'}, {id: 2, text: 'lawl'}, {id: 3, text: 'teehee'}],
       doubleClick: {
-        delay: 200,
+        delay: 300,
         clicks: 0,
         timer: null,
         singleClickFunctionName: 'toggleTodoCollapsed',
@@ -47,6 +58,12 @@ export default {
     toggleTodoCollapsed: function () {
       this.isCollapsed = !this.isCollapsed
     },
+    expand: function () {
+      this.isCollapsed = false
+    },
+    collapse: function () {
+      this.isCollapsed = true
+    },
     onTodoCompleted: function () {
       this.isCompleted = !this.isCompleted
 
@@ -54,11 +71,19 @@ export default {
         this.$emit('completed')
       }
     },
-    doubleClickHandler: function (event) {
+    onTitleClick: function (event) {
+      this.expand()
+      event.stopPropagation()
+    },
+    onTodoClick: function (event) {
       var self = this
 
       if (self.isCompleted) {
         return
+      }
+
+      if (!self.isCollapsed) {
+        event.stopPropagation()
       }
 
       this.doubleClick.clicks++
@@ -71,6 +96,7 @@ export default {
         clearTimeout(self.doubleClick.timer)
         self.doubleClick.clicks = 0
         self.toggleTodoCollapsed()
+        event.stopPropagation()
       }
     }
   }
@@ -88,10 +114,10 @@ h1, h2 {
 .todo{
   display: flex;
   flex-direction: column;
-  flex: 1 0 auto; 
+  flex: 1 1 auto; 
   align-items: stretch;
   
-  padding: 10px;
+  padding: 10px 15px;
   background-color: #ffffff;
   box-shadow: 0 0 3px #dfdfdf;
   border-radius: 4px;
@@ -100,7 +126,9 @@ h1, h2 {
     .todo-details{
       padding: 0 18px;
       max-height: 0;
-      transition: max-height 0.3s ease-out, padding .3s ease-out .2s;
+      margin: 0;
+      transform: translate3d(0,0,0); /* trigger HW acceleration */
+      transition: max-height 0.3s ease-in-out, padding .3s ease-in-out .2s, margin .3s ease-in-out .2s;
     }
   }
 
@@ -110,18 +138,44 @@ h1, h2 {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-
-    padding: 10px 18px 15px 18px;
     
+    line-height: 40px;
+    height: 40px;
+
     .todo-checkbox{
-        margin: 0 15px 0 0;
         @extend .check-box;
+        margin: 0 15px 0 0;
+        line-height: 40px;
     }
 
     .todo-title{
-        font-weight: 400;
-        font-size: 25px;
-        margin: 0;
+        min-width: 25px;
+
+        .title-fixed{
+          font-weight: 400;
+          font-size: 25px;
+          line-height: 40px;
+          margin: 0;
+        }
+
+        .title-editable{
+          font-weight: 400;
+          font-size: 25px;
+          line-height: 40px;
+          margin: 0;
+
+          border: none;
+          border-color: transparent;
+          font-family: 'Avenir', Helvetica, Arial, sans-serif;
+
+          &:focus{
+            outline: none;
+          }
+
+          &::placeholder { /* Most modern browsers support this now. */
+            color: rgb(236, 236, 236);
+          }
+        }
     }
   }
 
@@ -133,13 +187,14 @@ h1, h2 {
     align-self: stretch;
 
     max-height: 1000px;
-    transition:max-height 0.3s ease-in;
+    transform: translate3d(0,0,0); /* trigger HW acceleration */    
+    transition:max-height 0.3s ease-in-out;
 
     overflow: hidden;
-    margin: 0 5px 0 5px;
     padding: 18px 18px;
     background-color: #fafafa;
-    border-radius: 15px;    
+    border-radius: 8px;
+    margin: 12px 0 2px 0;    
 
     .todo-notes{
       flex: 1 1 auto;

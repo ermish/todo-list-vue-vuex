@@ -18,13 +18,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    #todo-page {
-        display: grid;
-        grid-template-columns: 25px auto 25px;
+@import "../sass/_variables.scss";
 
-        #todo-list{
-            grid-column: 2 / 2;
-            margin: 25px 0;
-        }
+#todo-page {
+    display: grid;
+    grid-template-columns: 5px auto 5px;
+
+    @media screen and (min-width: $width-desktop) {
+        grid-template-columns: 25px auto 25px;
     }
+
+    #todo-list{
+        grid-column: 2 / 2;
+        margin: 25px 0;
+        padding: 11px 5px;
+    }
+}
 </style>

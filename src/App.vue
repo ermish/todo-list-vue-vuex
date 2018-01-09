@@ -6,7 +6,10 @@
 </template>
 
 <script>
+import { polyfill } from './utils/polyfills.js'
 import store from './vuex/store.js'
+
+polyfill()
 
 export default {
   name: 'app',
