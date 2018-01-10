@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { uuid } from '~/utils/polyfills.js'
 
 Vue.use(Vuex)
 
@@ -7,9 +8,9 @@ Vue.use(Vuex)
 // each Vuex instance is just a single state tree.
 const state = {
   todos: [
-    { id: 0, text: 'lol', notes: 'this is a note' },
-    { id: 1, text: 'lawl', notes: 'this is a description' },
-    { id: 3, text: 'teehee', notes: 'this is some detailed stuff' }
+    { id: '8be4bdf2-692c-4aac-91a8-537bae7aff20', text: 'lol', notes: 'this is a note' },
+    { id: '3be4bdf2-692c-4aac-91a8-537bae7aff21', text: 'lawl', notes: 'this is a description' },
+    { id: '4be4bdf2-692c-4aac-91a8-537bae7aff22', text: 'teehee', notes: 'this is some detailed stuff' }
   ]
 }
 
@@ -20,7 +21,8 @@ const state = {
 // for debugging purposes.
 const mutations = {
   addTodo (state) {
-    state.todos.push({ id: 4, text: '', notes: 'new todo notes' })
+    const newId = uuid()
+    state.todos.push({ id: newId, text: '', notes: 'new todo notes' })
   },
   removeTodo (state, todoId) {
     state.todos = state.todos.filter((obj) => {

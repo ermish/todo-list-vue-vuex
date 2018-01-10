@@ -6,10 +6,17 @@
 </template>
 
 <script>
-import { polyfill } from './utils/polyfills.js'
+import { createPolyfills } from './utils/polyfills.js'
 import store from './vuex/store.js'
+import Vue from 'vue'
 
-polyfill()
+createPolyfills()
+
+Vue.directive('focus', {
+  inserted: function (el) {
+    el.focus()
+  }
+})
 
 export default {
   name: 'app',

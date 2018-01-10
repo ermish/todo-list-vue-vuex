@@ -12,7 +12,8 @@
         <input class='title-editable'
                placeholder='drink some water...' 
                v-else 
-               v-model='title_' />
+               v-model='title_'
+               v-focus />
       </div>
     </div>
     <div class='todo-details'> 
@@ -48,16 +49,11 @@ export default {
       doubleClick: {
         delay: 300,
         clicks: 0,
-        timer: null,
-        singleClickFunctionName: 'toggleTodoCollapsed',
-        doubleClickFunctionName: 'toggleTodoCollapsed'
+        timer: null
       }
     }
   },
   methods: {
-    toggleTodoCollapsed: function () {
-      this.isCollapsed = !this.isCollapsed
-    },
     expand: function () {
       this.isCollapsed = false
     },
@@ -95,7 +91,7 @@ export default {
       } else {
         clearTimeout(self.doubleClick.timer)
         self.doubleClick.clicks = 0
-        self.toggleTodoCollapsed()
+        self.isCollapsed ? self.expand() : self.collapse()
         event.stopPropagation()
       }
     }
@@ -150,6 +146,7 @@ h1, h2 {
 
     .todo-title{
         min-width: 25px;
+        height: 40px;
 
         .title-fixed{
           font-weight: 400;
@@ -163,6 +160,7 @@ h1, h2 {
           font-size: 25px;
           line-height: 40px;
           margin: 0;
+          padding: 0;
 
           border: none;
           border-color: transparent;
